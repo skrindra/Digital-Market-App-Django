@@ -1,0 +1,184 @@
+{% extends 'myapp/base.html' %}
+{% block body %}
+<div class="flex justify-between">
+    <div class="ml-20 mt-10 font-bold text-xl">Your Sales Board</div>
+    <div class="mr-10 mt-10">
+        <a href="{% url 'dashboard' %}" class="bg-green-500 text-white font-bold px-2 py-4 mr-6 rounded-sm">Dashboard</a>
+    </div>
+</div>
+
+
+<!-- display lifetime earnings -->
+<div class="shadow-lg p-10 m-5">
+    <div>
+        <div class="text-5xl font-bold text-green-500 ml-3">$ {{ lifetime_revenue.amount__sum }}</div>
+        <div class="mt-10 text-sm font-bold">Your Lifetime Revenue</div>
+    </div>
+</div>
+
+<!-- display timely earnings -->
+<div class="flex">
+    <div class="shadow-lg w-1/3 m-5 p-4 text-center">
+        <div class="text-4xl font-bold text-green-500 ml-3">$ {{ last_year_revenue.amount__sum }}</div>
+        <div class="mt-10 text-sm font-bold">365 Day Revenue</div>
+    </div>
+
+    <div class="shadow-lg w-1/3 m-5 p-4 text-center">
+        <div class="text-4xl font-bold text-green-500 ml-3">$ {{ last_month_revenue.amount__sum }}</div>
+        <div class="mt-10 text-sm font-bold">30 Day Revenue</div>    
+    </div>
+
+    <div class="shadow-lg w-1/3 m-5 p-4 text-center">
+        <div class="text-4xl font-bold text-green-500 ml-3">$ {{ last_week_revenue.amount__sum }}</div>
+        <div class="mt-10 text-sm font-bold">7 Day Revenue</div>
+    </div>
+</div>
+
+
+
+<!-- 30 days sales table -->
+<div class="flex">
+
+    <!-- Table -->
+    <div class="shadow-lg w-1/2 ml-5 px-10">
+        <div class="font-bold m-5">30 Days Sale Revenue</div>
+        <div>
+            <div class="flex text-left m-2 p-2">
+                <div class="text-md font-bold w-1/2">Date</div>
+                <div class="text-md font-bold w-1/2">Sale Amount</div>
+            </div>
+            {% for daily_sale_revenue in daily_revenue %}
+                <div class="{{ forloop.counter|divisibleby:2|yesno:'bg-gray-100 bg-white' }} hover:bg-gray-200 flex text-left p-1">
+                <div class="text-md w-1/2 sale-date">{{ daily_sale_revenue.created_on }}</div>
+                <div class="text-md w-1/2 daily-sum">${{ daily_sale_revenue.sum }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <!-- chart -->
+    <div class="shadow-lg w-1/2 ml-5">
+        <div class="m-2 p-4 font-bold shadow-lg text-center">30 Days Sales Revenue</div>
+            <canvas id="myChart1"></canvas>
+    </div>
+
+</div>
+
+
+
+
+<!-- Product wise sales table -->
+<div class="flex mt-20">
+    <!-- chart -->
+    <div class="shadow-lg w-1/2 ml-5">
+        <div class="m-2 p-4 font-bold shadow-lg text-center">Product-wise Sales Revenue</div>
+            <canvas id="myChart2"></canvas>
+    </div>
+
+    <!-- Table -->
+    <div class="shadow-lg w-1/2 ml-5 px-10">
+        <div class="font-bold m-5">Products Sale Revenue</div>
+        <div>
+            <div class="flex text-left m-2 p-2">
+                <div class="text-md font-bold w-1/2">Product Name</div>
+                <div class="text-md font-bold w-1/2">Net Sale Amount</div>
+            </div>
+            {% for product_sale_sum in productwise_revenue %}
+                <div class="{{ forloop.counter|divisibleby:2|yesno:'bg-gray-100 bg-white' }} hover:bg-gray-200 flex text-left p-1">
+                <div class="text-md w-1/2 product-name">{{ product_sale_sum.product__name }}</div>
+                <div class="text-md w-1/2 product-sum">${{ product_sale_sum.sum }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    // Charting the 30 day data
+    const sums = document.getElementsByClassName('daily-sum')
+    const daily_sums = []
+    for(let i=0; i<sums.length; i++){
+        sum = sums[i].innerHTML
+        daily_sums.push(parseInt(sum.replace('$', '')))
+    }
+    // console.log(daily_sums)
+
+
+    const dates = document.getElementsByClassName('sale-date')
+    const dates_list = []
+    for(let i=0; i<dates.length; i++){
+        date = dates[i].innerHTML
+        dates_list.push(date)
+    }
+    // console.log(dates_list)
+
+
+    const ctx = document.getElementById('myChart1');
+  
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates_list,
+        datasets: [{
+          label: 'Sales for last 30 Days',
+          data: daily_sums,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+
+
+    // Charting the Product sales table
+    const product_sums = document.getElementsByClassName('product-sum')
+    const product_sums_list = []
+    for(let i=0; i<product_sums.length; i++){
+        sum = product_sums[i].innerHTML
+        product_sums_list.push(parseInt(sum.replace('$', '')))
+    }
+    console.log(product_sums_list)
+
+
+    const product_names = document.getElementsByClassName('product-name')
+    const product_names_list = []
+    for(let i=0; i<product_names.length; i++){
+        product = product_names[i].innerHTML
+        product_names_list.push(product)
+    }
+    console.log(product_names_list)
+
+
+    const ctx1 = document.getElementById('myChart2');
+  
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: product_names_list,
+        datasets: [{
+          label: 'Product-wise Sales',
+          data: product_sums_list,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+  
+{% endblock %}

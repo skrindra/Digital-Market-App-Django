@@ -7,6 +7,8 @@ import stripe, json
 from django.http import JsonResponse, HttpResponseNotFound
 from .forms import ProductForm, UserRegisterForm
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+import datetime
 
 
 # Create your views here.
@@ -66,7 +68,7 @@ def create_checkout_session(request, id):
 
     # creating order after checkout
     order = OrderDetail()
-    order.customer_email = request_data['email']
+    order.customer_email = request_data['email'].strip()
     order.product = product
     order.amount = product.price
     # Note: the checkout_session.payment_intent = 'null'. SO session_id is stored
@@ -93,6 +95,14 @@ def payment_success_view(request):
     order = get_object_or_404(OrderDetail, stripe_checkout_session_id=session_id)
     order.stripe_payment_intent = session.payment_intent
     order.has_paid = True
+
+    # updating the sales data for the product
+    product = Product.objects.get(id=order.product.id)
+    product.total_sales_amount = product.total_sales_amount + int(product.price)
+    product.total_sales = product.total_sales + 1
+    product.save()
+    # updating the sales data for the product
+    
     order.save()
 
     return render(request, 'myapp/payment_success.html', {'order': order})
@@ -168,5 +178,44 @@ def invalid(request):
 
 
 def my_orders(request):
-    orders = OrderDetail.objects.all()
+    orders = OrderDetail.objects.filter(customer_email=request.user.email)
     return render(request,'myapp/orders.html',{'orders':orders})
+
+
+def sales(request):
+    orders = OrderDetail.objects.filter(product__seller=request.user)
+
+    # import the Sum function from the django.db.models
+    lifetime_revenue = orders.aggregate(Sum('amount'))
+    
+    # 365 days sales sum
+    last_year = datetime.date.today() - datetime.timedelta(days=365)
+    orders = OrderDetail.objects.filter(product__seller=request.user,created_on__gt=last_year)
+    last_year_revenue = orders.aggregate(Sum('amount'))
+
+    # 30 days sales sum
+    last_month = datetime.date.today() - datetime.timedelta(days=30)
+    orders = OrderDetail.objects.filter(product__seller=request.user,created_on__gt=last_month)
+    last_month_revenue = orders.aggregate(Sum('amount'))
+
+    # 7 days sales sum
+    last_week = datetime.date.today() - datetime.timedelta(days=7)
+    orders = OrderDetail.objects.filter(product__seller=request.user,created_on__gt=last_week)
+    last_week_revenue = orders.aggregate(Sum('amount'))
+
+    # everyday sum for last 30 days
+    daily_revenue = orders = OrderDetail.objects.filter(product__seller=request.user).values('created_on').order_by('created_on').annotate(sum=Sum('amount'))
+    # print(daily_revenue)
+
+    # Product-wise total revenue
+    productwise_revenue = OrderDetail.objects.filter(product__seller=request.user).values('product__name').order_by('product__name').annotate(sum=Sum('amount'))
+     
+
+    return render(request,'myapp/sales.html',
+                  {'lifetime_revenue':lifetime_revenue,
+                   'last_year_revenue':last_year_revenue,
+                   'last_month_revenue':last_month_revenue,
+                   'last_week_revenue':last_week_revenue,
+                   'daily_revenue':daily_revenue,
+                   'productwise_revenue':productwise_revenue,
+                   })

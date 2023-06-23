@@ -1,0 +1,43 @@
+{% extends 'myapp/base.html' %}
+{% block body %}
+
+<div class="flex justify-between">
+    <div class="ml-20 mt-10 font-bold text-xl">My Orders</div>
+    <div class="mr-10 mt-10">
+        <a href="{% url 'index' %}" class="bg-green-500 text-white font-bold px-2 py-4 mr-6 rounded-sm">Explore Products</a>
+    </div>
+</div>
+
+<div class="flex flex-col items-center justify-center mx-auto w-4/5 mt-20">
+    <table class="min-w-full bg-white border shadow-lg rounded-lg overflow-hidden text-center">
+      <thead>
+        <tr>
+          <th class="px-4 py-2 bg-gray-200 text-gray-800">Product</th>
+          <th class="px-4 py-2 bg-gray-200 text-gray-800">Amount paid</th>
+          <th class="px-4 py-2 bg-gray-200 text-gray-800">Order date</th>
+          <th class="px-4 py-2 bg-gray-200 text-gray-800">Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr class="{% cycle 'bg-gray-100' 'bg-white' %} hover:bg-gray-300">
+          <td class="px-4 py-2 ml-2">
+            <a href="{% url 'detail' order.product.id %}" class="flex gap-3 ">
+                <img class="h-12" src="{{ order.product.file.url }}" alt="" style="width:50px;">
+                <div class="mt-2">{{ order.product.name }}</div>
+            </a>  
+          </td>
+          <td class="px-4 py-2 text-green-500 font-bold">$ {{ order.product.price }}</td>
+          <td class="px-4 py-2">{{ order.created_on }}</td>
+          <td class="px-4 py-2">
+            <a href="{{ order.product.file.url }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded shadow px-4 py-2">
+              Download
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+{% endblock %}

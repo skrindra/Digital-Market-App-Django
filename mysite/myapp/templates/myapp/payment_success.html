@@ -1,0 +1,14 @@
+{% extends 'myapp/base.html' %}
+
+{% block body %}
+    <div class="grid place-items-center h-screen">
+        <div class="text-3xl font-bold">Payment Successful !</div>
+        <img class="h-20 w-20 shadow-lg rounded-full" src="https://cdn2.iconfinder.com/data/icons/greenline/512/check-256.png" alt="">
+        <a href="{{ order.product.file.url }}" class="bg-blue-500 rounded shadow-lg font-bold text-white px-4 py-2" download>
+            Download Product
+        </a>
+
+    </div>
+
+{% endblock %}
+

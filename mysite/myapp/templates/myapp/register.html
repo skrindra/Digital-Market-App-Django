@@ -1,0 +1,44 @@
+{% extends 'myapp/base.html' %}
+{% block body %}
+<div class="max-w-sm w-full sm:max-w-md mx-auto mt-20 mb-20">
+    <h2 class="text-2xl font-bold mb-4 text-center mb-10">🔐 Register as new user</h2>
+    <div class="bg-white p-6 rounded-lg shadow-md card">
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="first_name">First Name:</label>
+                <div class="border rounded-lg px-3 py-2 w-full">{{ user_form.first_name }}</div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="last_name">Last Name:</label>
+                <div class="border rounded-lg px-3 py-2 w-full">{{ user_form.last_name }}</div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email:</label>
+                <div class="border rounded-lg px-3 py-2 w-full">{{ user_form.email }}</div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username:</label>
+                <div class="border rounded-lg px-3 py-2 w-full">{{ user_form.username }}</div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password:</label>
+                <div class="border rounded-lg px-3 py-2 w-full">{{ user_form.password }}</div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm_password">Confirm Password:</label>
+                <div class="border rounded-lg px-3 py-2 w-full">{{ user_form.password2 }}</div>
+            </div>
+            <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg w-full" type="submit">Register</button>
+        </form>
+
+    </div>
+    <p class="m-10 text-center">
+        <a href="{% url 'login' %}">Already Registered? <span class="text-indigo-700">Login</span> Here!</a>
+    </p>
+    
+</div>
+    
+
+{% endblock %}

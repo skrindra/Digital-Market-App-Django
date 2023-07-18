@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-bs5pmc37r=#c14v2+0t6x46xj98mvfh5=rdx29pu^p+$x%^s2(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# the allowed hosts are added for vercel
+ALLOWED_HOSTS = ['.vercel.app', '.now.sh']
 
 
 # Application definition
@@ -75,11 +76,15 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+
 }
 
 
@@ -135,3 +140,8 @@ STRIPE_PUBLISHABLE_KEY = 'pk_test_51NKiYzSD952BrficeDajDhhIcE0MwFBnb4mWtS8ZkY0u6
 LOGIN_REDIRECT_URL = '/'
 
 LOGIN_URL = '/login/'
+
+
+# configs for vercel deploy (generating static files)
+STATICFILES_DIRS = os.path.join(BASE_DIR,'static'),
+STATICFILES_ROOT = os.path.join(BASE_DIR,'staticfiles_build','static')

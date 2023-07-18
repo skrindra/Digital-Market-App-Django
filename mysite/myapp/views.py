@@ -177,11 +177,13 @@ def invalid(request):
     return render(request,'myapp/invalid.html')
 
 
+@login_required
 def my_orders(request):
     orders = OrderDetail.objects.filter(customer_email=request.user.email)
     return render(request,'myapp/orders.html',{'orders':orders})
 
 
+@login_required
 def sales(request):
     orders = OrderDetail.objects.filter(product__seller=request.user)
 

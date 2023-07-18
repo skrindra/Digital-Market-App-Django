@@ -1,0 +1,29 @@
+# Byte-compiled / optimized Python files
+*.pyc
+*.pyo
+__pycache__/
+
+# Database files
+*.sqlite3
+db.sqlite3
+
+# # Static files
+# /static/
+
+# # Media files
+# /media/
+
+# Environment variables
+.env
+
+# Development-related files
+*.log
+*.pot
+*.pyc
+local_settings.py
+
+# Dependency directories
+venv/
+env/
+lib/
+bin/

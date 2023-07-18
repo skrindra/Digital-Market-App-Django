@@ -12,7 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,13 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bs5pmc37r=#c14v2+0t6x46xj98mvfh5=rdx29pu^p+$x%^s2('
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 # the allowed hosts are added for vercel
 ALLOWED_HOSTS = ['.vercel.app', '.now.sh']
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -84,7 +87,14 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # }
 
 DATABASES = {
-
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('PGDATABASE'),
+        'USER': os.environ.get('PGUSER'),
+        'PASSWORD': os.environ.get('PGPASSWORD'),
+        'HOST': os.environ.get('PGHOST'),
+        'PORT': os.environ.get('PGPORT'),
+    }
 }
 
 
@@ -133,8 +143,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Stripe details
-STRIPE_SECRET_KEY = 'sk_test_51NKiYzSD952BrficducaATQ0ZCsluxkNPd5zF2GYHwOSZuPKDYkihAJcGRmlAZEJBe3IV2Ili7JZVFlg9JKg3OD100mppAvgIS'
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51NKiYzSD952BrficeDajDhhIcE0MwFBnb4mWtS8ZkY0u6y9ovTri4OrozUse0Y3qAwi9cJ8LRid99DKtkscmBMJa00IUrTo2lD'
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
 
 # Redirect URLS for Login & Logout
 LOGIN_REDIRECT_URL = '/'
@@ -142,6 +152,8 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
 
-# configs for vercel deploy (generating static files)
-STATICFILES_DIRS = os.path.join(BASE_DIR,'static'),
-STATICFILES_ROOT = os.path.join(BASE_DIR,'staticfiles_build','static')
+# configs for vercel deploy (mentioning teh route where the static files will be collected)
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
+#  --> The above line is not needed if static directory exists in any of the apps, django will automatically search for the static directory in each of the apps
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+

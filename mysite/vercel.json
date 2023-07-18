@@ -2,12 +2,12 @@
     "version":2,
     "build": [
         {
-            "src":"mysite/mysite/wsgi.py",
+            "src":"mysite/wsgi.py",
             "use":"@vercel/python",
             "config":{ "maxLabdaSize": "15mb","runtime": "python3.11"}    
         },
         {
-            "src":"mysite/build.sh",
+            "src":"build_files.sh",
             "use":"@vercel/static-build",
             "config":{"distDir":"staticfiles_build"}
         }

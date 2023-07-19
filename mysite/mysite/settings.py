@@ -29,8 +29,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 # the allowed hosts are added for vercel
-ALLOWED_HOSTS = ['.vercel.app', '.now.sh']
-# ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['.vercel.app', '.now.sh']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -153,7 +153,7 @@ LOGIN_URL = '/login/'
 
 
 # configs for vercel deploy (mentioning teh route where the static files will be collected)
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
 #  --> The above line is not needed if static directory exists in any of the apps, django will automatically search for the static directory in each of the apps
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
 

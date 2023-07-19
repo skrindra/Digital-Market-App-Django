@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 # the allowed hosts are added for vercel
 # ALLOWED_HOSTS = ['.vercel.app', '.now.sh']
 
